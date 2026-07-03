@@ -79,6 +79,9 @@ def generate_postinstall_config(header: tomlkit.TOMLDocument) -> str:
         ]:
             value = partition.get(key)
 
+            if value is None:
+                continue
+
             if isinstance(value, bool):
                 value = str(value).lower()
 
@@ -121,7 +124,8 @@ def generate_delta_payload(
         f'--new_partitions={":".join(new_partitions)}',
         '--enable_zucchini=true',
         '--enable_lz4diff=false',
-        '--enable_vabc_xor=true',
+        '--enable_vabc_xor=false',
+        '--disable_verity_computation=true',
         '--major_version=2',
         '--minor_version=8',
         f'--partition_timestamps={",".join(timestamps)}',
@@ -452,16 +456,19 @@ def parse_args():
     generate.add_argument(
         '--input-old',
         required=True,
+        type=pathlib.Path,
         help='Path to old full OTA zip file',
     )
     generate.add_argument(
         '--input-new',
         required=True,
+        type=pathlib.Path,
         help='Path to new full OTA zip file',
     )
     generate.add_argument(
         '--output-inc',
         required=True,
+        type=pathlib.Path,
         help='Path to output incremental OTA zip file',
     )
 
@@ -473,17 +480,20 @@ def parse_args():
     apply.add_argument(
         '--input-old',
         required=True,
+        type=pathlib.Path,
         help='Path to old full OTA zip file',
     )
     apply.add_argument(
         '--input-inc',
         required=True,
         action='append',
+        type=pathlib.Path,
         help='Path to incremental OTA zip file',
     )
     apply.add_argument(
         '--output-new',
         required=True,
+        type=pathlib.Path,
         help='Path to output full OTA zip file',
     )
 
