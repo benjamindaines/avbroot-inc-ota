@@ -79,6 +79,9 @@ def generate_postinstall_config(header: tomlkit.TOMLDocument) -> str:
         ]:
             value = partition.get(key)
 
+            if value is None:
+                continue
+
             if isinstance(value, bool):
                 value = str(value).lower()
 
